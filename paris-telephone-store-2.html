@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Paris Telephone Store — Abidjan</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C9A84C;--gold-light:#E8C96A;--dark:#0A0A0A;--dark2:#141414;--dark3:#1E1E1E;
+  --white:#FFFFFF;--off:#F7F5F0;--border:#E8E4DC;--muted:#888;--text:#1A1A1A;
+  --success:#1D9E75;--danger:#D85A30;--info:#378ADD;
+  --radius:12px;--radius-sm:8px;--radius-lg:20px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);min-height:100vh}
+
+nav{background:var(--dark);position:sticky;top:0;z-index:100;padding:0 2rem}
+.nav-inner{max-width:1100px;margin:0 auto;height:60px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--white);letter-spacing:-0.5px;cursor:pointer}
+.logo span{color:var(--gold)}
+.nav-links{display:flex;gap:1.5rem}
+.nav-links a{color:rgba(255,255,255,0.65);font-size:14px;text-decoration:none;cursor:pointer;transition:color .2s}
+.nav-links a:hover{color:var(--white)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.cart-btn{background:var(--gold);color:#000;border:none;padding:8px 18px;border-radius:30px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:7px;transition:background .2s}
+.cart-btn:hover{background:var(--gold-light)}
+.cart-badge{background:#E24B4A;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+.page{display:none;animation:fadeIn .3s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.hero{background:var(--dark);padding:4rem 2rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-80px;left:-80px;width:320px;height:320px;border-radius:50%;border:1px solid rgba(201,168,76,0.1)}
+.hero::after{content:'';position:absolute;bottom:-100px;right:-60px;width:280px;height:280px;border-radius:50%;border:1px solid rgba(201,168,76,0.08)}
+.hero-inner{max-width:700px;margin:0 auto;position:relative}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);color:var(--gold);font-size:12px;padding:5px 14px;border-radius:30px;margin-bottom:1.5rem;letter-spacing:0.3px}
+.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(28px,5vw,48px);line-height:1.1;color:var(--white);margin-bottom:1rem}
+.hero h1 span{color:var(--gold)}
+.hero p{color:rgba(255,255,255,0.55);font-size:15px;font-weight:300;margin-bottom:2rem;line-height:1.7}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--gold);color:#000;border:none;padding:13px 28px;border-radius:30px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.2);padding:13px 28px;border-radius:30px;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.hero-badges{display:flex;gap:10px;justify-content:center;margin-top:2rem;flex-wrap:wrap}
+.hero-badge{background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);font-size:12px;padding:6px 14px;border-radius:20px}
+
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+.section{padding:3rem 2rem}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:12px}
+.section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:24px}
+.section-title span{color:var(--gold)}
+.see-all{color:var(--gold);font-size:14px;cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif}
+
+.filter-bar{display:flex;gap:8px;margin-bottom:1.5rem;overflow-x:auto;padding-bottom:6px;flex-wrap:wrap}
+.filter-btn{border:1.5px solid var(--border);background:var(--white);color:var(--muted);padding:7px 16px;border-radius:30px;font-size:13px;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;transition:all .2s}
+.filter-btn.active,.filter-btn:hover{background:var(--dark);color:var(--white);border-color:var(--dark)}
+
+/* PRODUCT GRID */
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.product-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .25s;position:relative}
+.product-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.1)}
+.product-img{height:180px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#F5F3EE 0%,#ECEAE4 100%);position:relative;overflow:hidden}
+.product-img img{width:100%;height:100%;object-fit:contain;padding:12px;transition:transform .3s}
+.product-card:hover .product-img img{transform:scale(1.06)}
+.product-img .ph-emoji{font-size:56px}
+.product-label{position:absolute;top:10px;left:10px;font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;z-index:2}
+.label-new{background:#E6F1FB;color:#185FA5}
+.label-occ{background:#FAEEDA;color:#854F0B}
+.wishlist-btn{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.92);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .2s;z-index:2}
+.wishlist-btn:hover{background:var(--gold);border-color:var(--gold)}
+.product-body{padding:14px}
+.product-brand{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.product-name{font-weight:500;font-size:14px;margin:3px 0 4px;color:var(--text);line-height:1.3}
+.product-storage{font-size:12px;color:var(--muted);margin-bottom:10px}
+.product-footer{display:flex;align-items:center;justify-content:space-between}
+.product-price{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--gold)}
+.product-price-old{font-size:11px;color:var(--muted);text-decoration:line-through;margin-top:1px}
+.add-cart{background:var(--dark);color:var(--white);border:none;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.add-cart:hover{background:var(--gold);color:#000;transform:scale(1.1)}
+
+/* DETAIL */
+.detail-layout{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;max-width:1100px;margin:0 auto;padding:2rem}
+@media(max-width:700px){.detail-layout{grid-template-columns:1fr}}
+.detail-img-box{background:linear-gradient(135deg,#F5F3EE,#ECEAE4);border:1px solid var(--border);border-radius:var(--radius);height:380px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.detail-img-box img{width:100%;height:100%;object-fit:contain;padding:24px}
+.detail-label{position:absolute;top:16px;left:16px;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px}
+.detail-info{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem}
+.detail-brand{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.detail-name{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;margin-bottom:8px;line-height:1.2}
+.detail-price{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--gold);margin-bottom:1rem}
+.detail-divider{border:none;border-top:1px solid var(--border);margin:1rem 0}
+.detail-specs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.25rem}
+.spec-item{background:var(--off);border-radius:var(--radius-sm);padding:10px 12px}
+.spec-label{font-size:11px;color:var(--muted);margin-bottom:2px}
+.spec-val{font-size:13px;font-weight:500}
+.detail-desc{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:1.5rem}
+.detail-qty{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem}
+.detail-qty label{font-size:14px;color:var(--muted)}
+.qty-ctrl{display:flex;align-items:center;gap:8px}
+.qty-btn{width:32px;height:32px;border:1px solid var(--border);background:var(--white);border-radius:8px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.qty-btn:hover{background:var(--gold);border-color:var(--gold);color:#000}
+.qty-num{font-weight:500;font-size:16px;min-width:24px;text-align:center}
+.btn-add-detail{width:100%;background:var(--dark);color:var(--white);border:none;padding:14px;border-radius:var(--radius);font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;margin-bottom:10px}
+.btn-add-detail:hover{background:var(--gold);color:#000}
+.btn-buy-now{width:100%;background:var(--gold);color:#000;border:none;padding:14px;border-radius:var(--radius);font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-buy-now:hover{background:var(--gold-light)}
+
+/* CART */
+.cart-layout{max-width:900px;margin:0 auto;padding:2rem;display:grid;grid-template-columns:1fr 340px;gap:1.5rem;align-items:start}
+@media(max-width:700px){.cart-layout{grid-template-columns:1fr}}
+.cart-items{background:var(--white);border:1px solid var(--border);border-radius:var(--radius)}
+.cart-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);font-family:'Syne',sans-serif;font-weight:700;font-size:18px}
+.cart-item{display:flex;align-items:center;gap:1rem;padding:1.25rem 1.5rem;border-bottom:1px solid var(--border)}
+.cart-item:last-child{border-bottom:none}
+.cart-item-img{width:64px;height:64px;background:var(--off);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.cart-item-img img{width:100%;height:100%;object-fit:contain;padding:6px}
+.cart-item-info{flex:1}
+.cart-item-name{font-weight:500;font-size:14px;margin-bottom:3px}
+.cart-item-sub{font-size:12px;color:var(--muted)}
+.cart-item-price{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--gold)}
+.cart-item-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px;transition:color .2s}
+.cart-item-remove:hover{color:var(--danger)}
+.cart-empty{padding:3rem;text-align:center;color:var(--muted)}
+.cart-summary{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;position:sticky;top:80px}
+.summary-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;margin-bottom:1.5rem}
+.summary-row{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:10px}
+.summary-row strong{color:var(--text);font-weight:500}
+.summary-total{display:flex;justify-content:space-between;font-size:18px;font-weight:700;border-top:1px solid var(--border);padding-top:14px;margin-top:14px}
+.summary-total span:last-child{color:var(--gold);font-family:'Syne',sans-serif}
+.checkout-btn{width:100%;background:var(--dark);color:var(--white);border:none;padding:14px;border-radius:var(--radius);font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:1rem;transition:all .2s}
+.checkout-btn:hover{background:var(--gold);color:#000}
+.secure-badge{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--muted);margin-top:12px}
+
+/* ORDER */
+.order-layout{max-width:900px;margin:0 auto;padding:2rem;display:grid;grid-template-columns:1fr 320px;gap:1.5rem;align-items:start}
+@media(max-width:700px){.order-layout{grid-template-columns:1fr}}
+.order-form{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem}
+.form-section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:1.25rem;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-row.full{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:13px;color:var(--muted)}
+.form-group input,.form-group select,.form-group textarea{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);transition:border-color .2s;outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--gold);background:var(--white)}
+.form-group textarea{resize:vertical;min-height:80px}
+
+.pay-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.pay-option{border:2px solid var(--border);border-radius:var(--radius-sm);padding:14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;background:var(--off)}
+.pay-option:hover{border-color:var(--gold)}
+.pay-option.selected{border-color:var(--gold);background:#FFF8E8}
+.pay-icon{font-size:24px;flex-shrink:0}
+.pay-name{font-size:13px;font-weight:500}
+.pay-desc{font-size:11px;color:var(--muted)}
+.pay-details{background:var(--off);border-radius:var(--radius-sm);padding:14px;margin-bottom:1.25rem;font-size:14px;line-height:1.7;color:var(--muted)}
+.delivery-options{display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem}
+.delivery-option{border:2px solid var(--border);border-radius:var(--radius-sm);padding:14px;cursor:pointer;transition:all .2s;display:flex;justify-content:space-between;align-items:center;background:var(--off)}
+.delivery-option:hover{border-color:var(--gold)}
+.delivery-option.selected{border-color:var(--gold);background:#FFF8E8}
+.delivery-left{display:flex;align-items:center;gap:10px}
+.delivery-icon{font-size:22px}
+.delivery-name{font-size:14px;font-weight:500}
+.delivery-time{font-size:12px;color:var(--muted)}
+.delivery-price{font-weight:700;color:var(--gold);font-family:'Syne',sans-serif}
+
+/* CONFIRMATION */
+.confirmation{max-width:600px;margin:0 auto;padding:3rem 2rem;text-align:center}
+.confirm-icon{font-size:64px;margin-bottom:1.5rem}
+.confirm-title{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;margin-bottom:1rem}
+.confirm-sub{color:var(--muted);font-size:16px;margin-bottom:2rem;line-height:1.7}
+.confirm-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;text-align:left}
+.confirm-row{display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--border)}
+.confirm-row:last-child{border-bottom:none;font-weight:700;font-size:16px}
+.confirm-row span:last-child{color:var(--gold);font-family:'Syne',sans-serif}
+
+/* PAY SECTION */
+.pay-section{background:var(--dark);padding:2.5rem 2rem;text-align:center}
+.pay-logos{display:flex;gap:12px;flex-wrap:wrap;margin-top:1.5rem;justify-content:center}
+.pay-logo-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);padding:16px 24px;text-align:center;min-width:110px}
+.pay-logo-emoji{font-size:28px;margin-bottom:8px}
+.pay-logo-name{color:var(--white);font-size:13px;font-weight:500}
+.pay-logo-sub{color:rgba(255,255,255,0.4);font-size:11px}
+
+footer{background:var(--dark2);padding:2.5rem 2rem;border-top:1px solid #2A2A2A}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem}
+@media(max-width:600px){.footer-inner{grid-template-columns:1fr}}
+.footer-brand .logo{display:inline-block;margin-bottom:10px}
+.footer-brand p{color:rgba(255,255,255,0.4);font-size:13px;line-height:1.7;max-width:260px}
+.footer-col h4{color:var(--white);font-size:14px;font-weight:500;margin-bottom:14px}
+.footer-col a{display:block;color:rgba(255,255,255,0.4);font-size:13px;margin-bottom:8px;text-decoration:none;cursor:pointer;transition:color .2s}
+.footer-col a:hover{color:var(--gold)}
+.footer-bottom{max-width:1100px;margin:2rem auto 0;padding-top:1.5rem;border-top:1px solid #2A2A2A;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.footer-bottom p{color:rgba(255,255,255,0.3);font-size:12px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);color:var(--white);padding:12px 24px;border-radius:30px;font-size:14px;display:flex;align-items:center;gap:10px;z-index:999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);border:1px solid rgba(201,168,76,0.35)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+.back-btn{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;padding:1.5rem 2rem;transition:color .2s}
+.back-btn:hover{color:var(--text)}
+
+.steps{display:flex;align-items:center;justify-content:center;gap:0;margin:1.5rem auto;max-width:500px;padding:0 2rem}
+.step{display:flex;align-items:center;gap:8px;font-size:13px}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.step.done .step-num{background:var(--success);color:var(--white)}
+.step.active .step-num{background:var(--gold);color:#000}
+.step.inactive .step-num{background:var(--border);color:var(--muted)}
+.step.active .step-label{color:var(--text);font-weight:500}
+.step.inactive .step-label{color:var(--muted)}
+.step-line{flex:1;height:1px;background:var(--border);margin:0 8px;min-width:30px}
+
+/* IMG placeholder fallback */
+.img-fallback{font-size:52px;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+
+@media(max-width:600px){
+  .nav-links{display:none}
+  .hero h1{font-size:26px}
+  .pay-options{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .product-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo" onclick="showPage('home')">PARIS<span>.</span>PHONE</div>
+    <div class="nav-links">
+      <a onclick="showPage('catalog')">Catalogue</a>
+      <a onclick="showPage('catalog');setFilter('occasion')">Occasion</a>
+      <a onclick="showPage('about')">À propos</a>
+    </div>
+    <div class="nav-right">
+      <button class="cart-btn" onclick="showPage('cart')">
+        🛒 Panier <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">📍 Abidjan, Côte d'Ivoire</div>
+      <h1>iPhones <span>neufs & d'occasion</span><br>au meilleur prix</h1>
+      <p>Tous les modèles disponibles · Garantie qualité · Livraison rapide</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="showPage('catalog')">Voir le catalogue</button>
+        <button class="btn-outline" onclick="showPage('catalog');setFilter('occasion')">iPhones Occasion</button>
+      </div>
+      <div class="hero-badges">
+        <div class="hero-badge">✅ Produits vérifiés</div>
+        <div class="hero-badge">🚚 Livraison Abidjan</div>
+        <div class="hero-badge">🔒 Paiement sécurisé</div>
+        <div class="hero-badge">↩️ Retour 7 jours</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title">iPhones <span>disponibles</span></div>
+        <button class="see-all" onclick="showPage('catalog')">Voir tout →</button>
+      </div>
+      <div class="product-grid" id="homeGrid"></div>
+    </div>
+  </div>
+
+  <div class="pay-section">
+    <div class="container">
+      <div class="section-title" style="color:var(--white);margin-bottom:8px">Moyens de <span>paiement</span></div>
+      <p style="color:rgba(255,255,255,0.45);font-size:14px">Plusieurs options pour votre confort</p>
+      <div class="pay-logos">
+        <div class="pay-logo-card"><div class="pay-logo-emoji">🟠</div><div class="pay-logo-name">Orange Money</div><div class="pay-logo-sub">Paiement mobile</div></div>
+        <div class="pay-logo-card"><div class="pay-logo-emoji">🟡</div><div class="pay-logo-name">MTN MoMo</div><div class="pay-logo-sub">Mobile Money</div></div>
+        <div class="pay-logo-card"><div class="pay-logo-emoji">🌊</div><div class="pay-logo-name">Wave</div><div class="pay-logo-sub">Transfert rapide</div></div>
+        <div class="pay-logo-card"><div class="pay-logo-emoji">💳</div><div class="pay-logo-name">Carte bancaire</div><div class="pay-logo-sub">Visa · Mastercard</div></div>
+        <div class="pay-logo-card"><div class="pay-logo-emoji">🏠</div><div class="pay-logo-name">À la livraison</div><div class="pay-logo-sub">Cash à réception</div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo">PARIS<span>.</span>PHONE</div>
+        <p>Votre boutique de téléphones neufs et d'occasion à Abidjan. Qualité garantie, livraison rapide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <a onclick="showPage('catalog')">Catalogue iPhones</a>
+        <a onclick="showPage('catalog');setFilter('occasion')">iPhones occasion</a>
+        <a onclick="showPage('cart')">Mon panier</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a>📱 +225 07 00 00 00 00</a>
+        <a>📘 Paris Telephone Store</a>
+        <a>📍 Abidjan, Côte d'Ivoire</a>
+        <a>🕐 Lun–Sam 8h–20h</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Paris Telephone Store · Abidjan, Côte d'Ivoire</p>
+      <p>Tous droits réservés</p>
+    </div>
+  </footer>
+</div>
+
+<!-- CATALOGUE -->
+<div id="page-catalog" class="page">
+  <div style="background:var(--dark);padding:1.5rem 2rem">
+    <div class="container">
+      <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:26px;color:var(--white)">Catalogue <span style="color:var(--gold)">iPhones</span></h2>
+      <p style="color:rgba(255,255,255,0.45);font-size:14px;margin-top:4px">Tous les modèles · Occasion vérifiés · Prix directs</p>
+    </div>
+  </div>
+  <div class="section">
+    <div class="container">
+      <div class="filter-bar" id="catalogFilters">
+        <button class="filter-btn active" onclick="setFilter('tous',this)">Tous</button>
+        <button class="filter-btn" onclick="setFilter('occasion',this)">Occasion</button>
+        <button class="filter-btn" onclick="setFilter('xr-11',this)">XR / 11</button>
+        <button class="filter-btn" onclick="setFilter('12',this)">iPhone 12</button>
+        <button class="filter-btn" onclick="setFilter('13',this)">iPhone 13</button>
+        <button class="filter-btn" onclick="setFilter('14',this)">iPhone 14</button>
+        <button class="filter-btn" onclick="setFilter('15',this)">iPhone 15</button>
+        <button class="filter-btn" onclick="setFilter('16',this)">iPhone 16</button>
+      </div>
+      <div class="product-grid" id="catalogGrid"></div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-bottom" style="max-width:1100px;margin:0 auto;border:none">
+      <p style="color:rgba(255,255,255,0.3);font-size:12px">© 2026 Paris Telephone Store</p>
+    </div>
+  </footer>
+</div>
+
+<!-- DÉTAIL -->
+<div id="page-detail" class="page">
+  <button class="back-btn" onclick="goBack()">← Retour</button>
+  <div class="detail-layout" id="detailContent"></div>
+</div>
+
+<!-- PANIER -->
+<div id="page-cart" class="page">
+  <button class="back-btn" onclick="showPage('catalog')">← Continuer les achats</button>
+  <div class="cart-layout">
+    <div class="cart-items">
+      <div class="cart-header">🛒 Mon panier</div>
+      <div id="cartItemsList"></div>
+    </div>
+    <div class="cart-summary">
+      <div class="summary-title">Récapitulatif</div>
+      <div class="summary-row"><span>Sous-total</span><strong id="subtotalVal">0 F</strong></div>
+      <div class="summary-row"><span>Livraison</span><strong id="deliveryVal">À calculer</strong></div>
+      <div class="summary-total"><span>Total</span><span id="totalVal">0 F</span></div>
+      <button class="checkout-btn" onclick="showPage('order')">Passer la commande →</button>
+      <div class="secure-badge">🔒 Paiement 100% sécurisé</div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMANDE -->
+<div id="page-order" class="page">
+  <button class="back-btn" onclick="showPage('cart')">← Retour au panier</button>
+  <div class="steps">
+    <div class="step active"><div class="step-num">1</div><div class="step-label">Informations</div></div>
+    <div class="step-line"></div>
+    <div class="step inactive"><div class="step-num">2</div><div class="step-label">Paiement</div></div>
+    <div class="step-line"></div>
+    <div class="step inactive"><div class="step-num">3</div><div class="step-label">Confirmation</div></div>
+  </div>
+  <div class="order-layout">
+    <div>
+      <div class="order-form" id="step1">
+        <div class="form-section-title">👤 Vos informations</div>
+        <div class="form-row">
+          <div class="form-group"><label>Prénom *</label><input type="text" id="fname" placeholder="Ex: Kouamé"/></div>
+          <div class="form-group"><label>Nom *</label><input type="text" id="lname" placeholder="Ex: Konan"/></div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group"><label>Téléphone *</label><input type="tel" id="phone" placeholder="+225 07 00 00 00 00"/></div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group"><label>Email (optionnel)</label><input type="email" id="email" placeholder="votre@email.com"/></div>
+        </div>
+        <div class="form-section-title" style="margin-top:1.5rem">📦 Livraison</div>
+        <div class="delivery-options">
+          <div class="delivery-option selected" onclick="selectDelivery(this,'abidjan',2000)">
+            <div class="delivery-left"><div class="delivery-icon">🏍️</div><div><div class="delivery-name">Livraison Abidjan</div><div class="delivery-time">24 – 48 heures</div></div></div>
+            <div class="delivery-price">2 000 F</div>
+          </div>
+          <div class="delivery-option" onclick="selectDelivery(this,'interieur',5000)">
+            <div class="delivery-left"><div class="delivery-icon">🚚</div><div><div class="delivery-name">Intérieur CI</div><div class="delivery-time">2 – 5 jours</div></div></div>
+            <div class="delivery-price">5 000 F</div>
+          </div>
+          <div class="delivery-option" onclick="selectDelivery(this,'retrait',0)">
+            <div class="delivery-left"><div class="delivery-icon">🏪</div><div><div class="delivery-name">Retrait boutique</div><div class="delivery-time">Immédiat</div></div></div>
+            <div class="delivery-price">Gratuit</div>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group"><label>Adresse *</label><input type="text" id="address" placeholder="Quartier, rue..."/></div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group"><label>Instructions</label><textarea id="notes" placeholder="Point de repère..."></textarea></div>
+        </div>
+        <button class="btn-buy-now" onclick="goToStep2()" style="margin-top:1rem">Continuer → Paiement</button>
+      </div>
+
+      <div class="order-form" id="step2" style="display:none">
+        <div class="form-section-title">💳 Paiement</div>
+        <div class="pay-options">
+          <div class="pay-option selected" onclick="selectPay(this,'orange')"><div class="pay-icon">🟠</div><div><div class="pay-name">Orange Money</div><div class="pay-desc">Mobile</div></div></div>
+          <div class="pay-option" onclick="selectPay(this,'mtn')"><div class="pay-icon">🟡</div><div><div class="pay-name">MTN MoMo</div><div class="pay-desc">Mobile</div></div></div>
+          <div class="pay-option" onclick="selectPay(this,'wave')"><div class="pay-icon">🌊</div><div><div class="pay-name">Wave</div><div class="pay-desc">Rapide</div></div></div>
+          <div class="pay-option" onclick="selectPay(this,'card')"><div class="pay-icon">💳</div><div><div class="pay-name">Carte</div><div class="pay-desc">Visa/MC</div></div></div>
+          <div class="pay-option" onclick="selectPay(this,'cash')"><div class="pay-icon">🏠</div><div><div class="pay-name">Livraison</div><div class="pay-desc">Cash</div></div></div>
+        </div>
+        <div class="pay-details" id="payDetails"><strong>Orange Money :</strong> Envoyez le montant au <strong>+225 07 00 00 00 00</strong>, puis entrez votre référence.</div>
+        <div class="form-row full" id="refRow">
+          <div class="form-group"><label>Référence de paiement *</label><input type="text" id="payRef" placeholder="Ex: CI2500123456"/></div>
+        </div>
+        <button class="btn-buy-now" onclick="placeOrder()">✅ Confirmer la commande</button>
+        <button class="btn-add-detail" onclick="backToStep1()" style="margin-top:10px">← Retour</button>
+      </div>
+    </div>
+
+    <div class="cart-summary" style="position:sticky;top:80px">
+      <div class="summary-title">Votre commande</div>
+      <div id="orderSummaryItems"></div>
+      <div class="summary-row" style="margin-top:12px"><span>Sous-total</span><strong id="orderSubtotal">0 F</strong></div>
+      <div class="summary-row"><span>Livraison</span><strong id="orderDelivery">2 000 F</strong></div>
+      <div class="summary-total"><span>Total</span><span id="orderTotal">0 F</span></div>
+      <div class="secure-badge" style="margin-top:12px">🔒 Commande sécurisée</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRMATION -->
+<div id="page-confirm" class="page">
+  <div class="confirmation">
+    <div class="confirm-icon">🎉</div>
+    <div class="confirm-title">Commande confirmée !</div>
+    <div class="confirm-sub">Merci pour votre achat. Vous recevrez un appel de confirmation sous peu.<br>N° de commande : <strong id="orderNum"></strong></div>
+    <div class="confirm-card" id="confirmDetails"></div>
+    <button class="btn-primary" onclick="showPage('home');resetCart()" style="width:100%;justify-content:center">← Retour à l'accueil</button>
+  </div>
+</div>
+
+<!-- À PROPOS -->
+<div id="page-about" class="page">
+  <div style="background:var(--dark);padding:3rem 2rem;text-align:center">
+    <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:32px;color:var(--white)">À propos de <span style="color:var(--gold)">Paris Telephone Store</span></h2>
+    <p style="color:rgba(255,255,255,0.55);font-size:15px;max-width:500px;margin:1rem auto 0;line-height:1.7">Votre boutique de confiance pour iPhones neufs et d'occasion à Abidjan.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;padding:2rem;max-width:1100px;margin:0 auto">
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center"><div style="font-size:36px;margin-bottom:1rem">✅</div><h4 style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px">Produits vérifiés</h4><p style="font-size:14px;color:var(--muted);line-height:1.6">Chaque iPhone est testé avant la vente.</p></div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center"><div style="font-size:36px;margin-bottom:1rem">🚚</div><h4 style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px">Livraison rapide</h4><p style="font-size:14px;color:var(--muted);line-height:1.6">Abidjan en 24–48h, toute la CI en 2–5 jours.</p></div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center"><div style="font-size:36px;margin-bottom:1rem">↩️</div><h4 style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px">Retour 7 jours</h4><p style="font-size:14px;color:var(--muted);line-height:1.6">Retour accepté sous 7 jours sans question.</p></div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center"><div style="font-size:36px;margin-bottom:1rem">💳</div><h4 style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px">Paiement flexible</h4><p style="font-size:14px;color:var(--muted);line-height:1.6">Orange Money, Wave, MTN, Carte, Cash.</p></div>
+  </div>
+  <footer>
+    <div class="footer-bottom" style="max-width:1100px;margin:0 auto;border:none">
+      <p style="color:rgba(255,255,255,0.3);font-size:12px">© 2026 Paris Telephone Store</p>
+    </div>
+  </footer>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+// ── CATALOGUE COMPLET avec vraies images ────────────────────────────────────
+const products = [
+  // iPhone XR / 11
+  {id:1,brand:'Apple',name:'iPhone XR',storage:'64 Go',price:90000,type:'occasion',cat:'xr-11',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-xr-white-select-201809?wid=470&hei=556&fmt=png-alpha&.v=1551226038083',
+   desc:'iPhone XR en bon état. Écran Liquid Retina 6.1", Touch ID, compatible 4G.'},
+
+  {id:2,brand:'Apple',name:'iPhone 11',storage:'64 Go',price:100000,type:'occasion',cat:'xr-11',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-11-black-select-2019?wid=470&hei=556&fmt=png-alpha&.v=1567022312683',
+   desc:'iPhone 11 occasion vérifié. Double caméra 12MP, Face ID, écran 6.1".'},
+
+  {id:3,brand:'Apple',name:'iPhone 11 Pro',storage:'64 Go',price:130000,type:'occasion',cat:'xr-11',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-11-pro-midnight-green-select-2019?wid=470&hei=556&fmt=png-alpha&.v=1567022205207',
+   desc:'iPhone 11 Pro triple caméra, écran Super Retina XDR 5.8", Face ID.'},
+
+  {id:4,brand:'Apple',name:'iPhone 11 Pro Max',storage:'64 Go',price:135000,type:'occasion',cat:'xr-11',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-11-pro-midnight-green-select-2019?wid=470&hei=556&fmt=png-alpha&.v=1567022205207',
+   desc:'iPhone 11 Pro Max, grand écran 6.5", triple caméra, autonomie excellente.'},
+
+  // iPhone 12
+  {id:5,brand:'Apple',name:'iPhone 12',storage:'64 Go',price:120000,type:'occasion',cat:'12',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-12-black-select-2020?wid=470&hei=556&fmt=png-alpha&.v=1604021661000',
+   desc:'iPhone 12 avec 5G, écran OLED Super Retina XDR 6.1", puce A14 Bionic.'},
+
+  {id:6,brand:'Apple',name:'iPhone 12 mini',storage:'64 Go',price:105000,type:'occasion',cat:'12',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-12-mini-black-select-2020?wid=470&hei=556&fmt=png-alpha&.v=1604021671000',
+   desc:'iPhone 12 mini compact, 5G, écran OLED 5.4", puce A14 Bionic.'},
+
+  {id:7,brand:'Apple',name:'iPhone 12 Pro',storage:'128 Go',price:170000,type:'occasion',cat:'12',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-12-pro-graphite-select?wid=470&hei=556&fmt=png-alpha&.v=1604021663000',
+   desc:'iPhone 12 Pro triple caméra, LiDAR, 5G, écran ProMotion 6.1".'},
+
+  {id:8,brand:'Apple',name:'iPhone 12 Pro Max',storage:'128 Go',price:195000,type:'occasion',cat:'12',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-12-pro-graphite-select?wid=470&hei=556&fmt=png-alpha&.v=1604021663000',
+   desc:'iPhone 12 Pro Max, grand format 6.7", triple caméra pro, LiDAR, 5G.'},
+
+  // iPhone 13
+  {id:9,brand:'Apple',name:'iPhone 13',storage:'128 Go',price:160000,type:'occasion',cat:'13',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-black-select-2021?wid=470&hei=556&fmt=png-alpha&.v=1645572315935',
+   desc:'iPhone 13 avec puce A15 Bionic, double caméra 12MP, autonomie améliorée.'},
+
+  {id:10,brand:'Apple',name:'iPhone 13 Pro',storage:'128 Go',price:215000,type:'occasion',cat:'13',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-pro-graphite-select?wid=470&hei=556&fmt=png-alpha&.v=1645572301795',
+   desc:'iPhone 13 Pro 128GB, triple caméra ProRes, écran ProMotion 120Hz.'},
+
+  {id:11,brand:'Apple',name:'iPhone 13 Pro',storage:'256 Go',price:230000,type:'occasion',cat:'13',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-pro-graphite-select?wid=470&hei=556&fmt=png-alpha&.v=1645572301795',
+   desc:'iPhone 13 Pro 256GB, triple caméra ProRes, écran ProMotion 120Hz, stockage premium.'},
+
+  {id:12,brand:'Apple',name:'iPhone 13 Pro Max',storage:'128 Go',price:240000,type:'occasion',cat:'13',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-pro-graphite-select?wid=470&hei=556&fmt=png-alpha&.v=1645572301795',
+   desc:'iPhone 13 Pro Max, grand écran 6.7" ProMotion, meilleure autonomie, triple caméra.'},
+
+  // iPhone 14 Pro
+  {id:13,brand:'Apple',name:'iPhone 14 Pro',storage:'128 Go',price:285000,type:'occasion',cat:'14',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-finish-select-202209-6-1inch-deeppurple?wid=940&hei=1112&fmt=png-alpha&.v=1660753619946',
+   desc:'iPhone 14 Pro avec Dynamic Island, caméra 48MP, écran Always-On.'},
+
+  {id:14,brand:'Apple',name:'iPhone 14 Pro',storage:'256 Go',price:310000,type:'occasion',cat:'14',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-finish-select-202209-6-1inch-deeppurple?wid=940&hei=1112&fmt=png-alpha&.v=1660753619946',
+   desc:'iPhone 14 Pro 256GB, Dynamic Island, caméra 48MP, stockage confortable.'},
+
+  {id:15,brand:'Apple',name:'iPhone 14 Pro Max',storage:'128 Go',price:315000,type:'occasion',cat:'14',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-finish-select-202209-6-7inch-deeppurple?wid=940&hei=1112&fmt=png-alpha&.v=1660753619551',
+   desc:'iPhone 14 Pro Max 128GB, grand écran 6.7", Dynamic Island, caméra 48MP.'},
+
+  {id:16,brand:'Apple',name:'iPhone 14 Pro Max',storage:'256 Go',price:325000,type:'occasion',cat:'14',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-finish-select-202209-6-7inch-deeppurple?wid=940&hei=1112&fmt=png-alpha&.v=1660753619551',
+   desc:'iPhone 14 Pro Max 256GB, le plus grand format, Dynamic Island, excellence photo.'},
+
+  // iPhone 15
+  {id:17,brand:'Apple',name:'iPhone 15',storage:'128 Go',price:290000,type:'occasion',cat:'15',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-finish-select-202309-6-1inch-black?wid=940&hei=1112&fmt=png-alpha&.v=1692923777972',
+   desc:'iPhone 15 avec Dynamic Island, USB-C, caméra 48MP, puce A16 Bionic.'},
+
+  {id:18,brand:'Apple',name:'iPhone 15 Pro',storage:'128 Go',price:355000,type:'occasion',cat:'15',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-1inch-blacktitanium?wid=940&hei=1112&fmt=png-alpha&.v=1692845702708',
+   desc:'iPhone 15 Pro titane, bouton Action, USB-C 3.0, puce A17 Pro, 48MP.'},
+
+  {id:19,brand:'Apple',name:'iPhone 15 Pro',storage:'256 Go',price:365000,type:'occasion',cat:'15',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-1inch-blacktitanium?wid=940&hei=1112&fmt=png-alpha&.v=1692845702708',
+   desc:'iPhone 15 Pro 256GB titane, bouton Action, USB-C 3.0, stockage généreux.'},
+
+  {id:20,brand:'Apple',name:'iPhone 15 Pro Max',storage:'256 Go',price:415000,type:'occasion',cat:'15',
+   img:'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-7inch-blacktitanium?wid=940&hei=1112&fmt=png-alpha&.v=1692845705226',
+   desc:'iPhone 15 Pro Max, titane, téléobjectif 5x, le meilleur iPhone disponible.'},
+
+  // iPhone 16
+  {id:21,brand:'Apple',name:'iPhone 16',storage:'128 Go',price:370000,type:'occasion',cat:'16',
+   img:'https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/iphone-16-finish-select-202409-6-1inch-black?wid=940&hei=1112&fmt=png-alpha&.v=1725009516811',
+   desc:'iPhone 16 avec bouton Camera Control, puce A18, Apple Intelligence.'},
+];
+
+let cart = [];
+let currentFilter = 'tous';
+let prevPage = 'home';
+let selectedDeliveryPrice = 2000;
+let selectedPayMethod = 'orange';
+
+function fmt(n){return n.toLocaleString('fr-FR')+' F CFA'}
+
+function imgEl(src, alt){
+  return `<img src="${src}" alt="${alt}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'img-fallback\\'>📱</div>'"/>`;
+}
+
+function renderCard(p, onclick){
+  return `<div class="product-card" onclick="${onclick}">
+    <div class="product-img">
+      ${imgEl(p.img, p.name)}
+      <span class="product-label ${p.type==='neuf'?'label-new':'label-occ'}">${p.type==='neuf'?'Neuf':'Occasion'}</span>
+      <button class="wishlist-btn" onclick="event.stopPropagation();showToast('❤️ Ajouté aux favoris')">♡</button>
+    </div>
+    <div class="product-body">
+      <div class="product-brand">${p.brand}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-storage">${p.storage}</div>
+      <div class="product-footer">
+        <div>
+          <div class="product-price">${fmt(p.price)}</div>
+          ${p.oldPrice?`<div class="product-price-old">${fmt(p.oldPrice)}</div>`:''}
+        </div>
+        <button class="add-cart" onclick="event.stopPropagation();addToCart(${p.id})" title="Ajouter au panier">+</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderHomeGrid(){
+  document.getElementById('homeGrid').innerHTML = products.slice(0,8).map(p=>renderCard(p,`showDetail(${p.id})`)).join('');
+}
+
+function renderCatalog(){
+  const filtered = currentFilter==='tous' ? products :
+    currentFilter==='occasion' ? products.filter(p=>p.type==='occasion') :
+    products.filter(p=>p.cat===currentFilter);
+  document.getElementById('catalogGrid').innerHTML = filtered.map(p=>renderCard(p,`showDetail(${p.id})`)).join('');
+}
+
+function setFilter(f, btn){
+  currentFilter = f;
+  if(btn){
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  renderCatalog();
+}
+
+function showDetail(id){
+  prevPage = document.querySelector('.page.active').id.replace('page-','');
+  const p = products.find(x=>x.id===id);
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-img-box">
+      ${imgEl(p.img, p.name)}
+      <span class="detail-label ${p.type==='neuf'?'label-new':'label-occ'}">${p.type==='neuf'?'Neuf':'Occasion'}</span>
+    </div>
+    <div class="detail-info">
+      <div class="detail-brand">${p.brand}</div>
+      <div class="detail-name">${p.name}</div>
+      <div class="detail-price">${fmt(p.price)}</div>
+      <hr class="detail-divider">
+      <div class="detail-specs">
+        <div class="spec-item"><div class="spec-label">Stockage</div><div class="spec-val">${p.storage}</div></div>
+        <div class="spec-item"><div class="spec-label">État</div><div class="spec-val">Occasion vérifié</div></div>
+        <div class="spec-item"><div class="spec-label">Garantie</div><div class="spec-val">3 mois</div></div>
+        <div class="spec-item"><div class="spec-label">Livraison</div><div class="spec-val">24–48h Abidjan</div></div>
+      </div>
+      <div class="detail-desc">${p.desc}</div>
+      <div class="detail-qty">
+        <label>Quantité :</label>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <div class="qty-num" id="detailQty">1</div>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+      <button class="btn-add-detail" onclick="addToCart(${p.id},parseInt(document.getElementById('detailQty').textContent));showToast('✅ Ajouté au panier !')">Ajouter au panier</button>
+      <button class="btn-buy-now" onclick="addToCart(${p.id},parseInt(document.getElementById('detailQty').textContent));showPage('cart')">Acheter maintenant →</button>
+    </div>`;
+  showPage('detail');
+}
+
+function changeQty(d){
+  const el=document.getElementById('detailQty');
+  let q=parseInt(el.textContent)+d;
+  if(q<1)q=1; if(q>10)q=10;
+  el.textContent=q;
+}
+
+function goBack(){showPage(prevPage)}
+
+function addToCart(id, qty=1){
+  const p=products.find(x=>x.id===id);
+  const existing=cart.find(x=>x.id===id);
+  if(existing){existing.qty+=qty}else{cart.push({...p,qty})}
+  updateCartBadge();
+  showToast('✅ '+p.name+' ajouté !');
+  renderCartPage();
+  renderOrderSummary();
+}
+
+function updateCartBadge(){
+  document.getElementById('cartBadge').textContent=cart.reduce((s,x)=>s+x.qty,0);
+}
+
+function renderCartPage(){
+  const el=document.getElementById('cartItemsList');
+  if(cart.length===0){
+    el.innerHTML='<div class="cart-empty"><p>Votre panier est vide</p><button class="btn-primary" onclick="showPage(\'catalog\')">Voir le catalogue</button></div>';
+    document.getElementById('subtotalVal').textContent='0 F';
+    document.getElementById('deliveryVal').textContent='—';
+    document.getElementById('totalVal').textContent='0 F';
+    return;
+  }
+  el.innerHTML=cart.map(item=>`
+    <div class="cart-item">
+      <div class="cart-item-img">${imgEl(item.img,item.name)}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name} · ${item.storage}</div>
+        <div class="cart-item-sub">Occasion · Qté : ${item.qty}</div>
+      </div>
+      <div class="cart-item-price">${fmt(item.price*item.qty)}</div>
+      <button class="cart-item-remove" onclick="removeFromCart(${item.id})">✕</button>
+    </div>`).join('');
+  const sub=cart.reduce((s,x)=>s+x.price*x.qty,0);
+  document.getElementById('subtotalVal').textContent=fmt(sub);
+  document.getElementById('deliveryVal').textContent=fmt(selectedDeliveryPrice);
+  document.getElementById('totalVal').textContent=fmt(sub+selectedDeliveryPrice);
+}
+
+function removeFromCart(id){
+  cart=cart.filter(x=>x.id!==id);
+  updateCartBadge();
+  renderCartPage();
+  renderOrderSummary();
+}
+
+function renderOrderSummary(){
+  const el=document.getElementById('orderSummaryItems');
+  if(!el)return;
+  el.innerHTML=cart.map(i=>`<div class="summary-row"><span>${i.name} ×${i.qty}</span><strong>${fmt(i.price*i.qty)}</strong></div>`).join('');
+  const sub=cart.reduce((s,x)=>s+x.price*x.qty,0);
+  document.getElementById('orderSubtotal').textContent=fmt(sub);
+  document.getElementById('orderDelivery').textContent=fmt(selectedDeliveryPrice);
+  document.getElementById('orderTotal').textContent=fmt(sub+selectedDeliveryPrice);
+}
+
+function selectDelivery(el,type,price){
+  document.querySelectorAll('.delivery-option').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedDeliveryPrice=price;
+  renderOrderSummary();
+}
+
+const payInfos={
+  orange:'<strong>Orange Money :</strong> Envoyez le montant au <strong>+225 07 00 00 00 00</strong>, puis entrez votre référence.',
+  mtn:'<strong>MTN MoMo :</strong> Envoyez le montant au <strong>+225 05 00 00 00 00</strong>, puis entrez votre référence.',
+  wave:'<strong>Wave :</strong> Envoyez le montant au <strong>+225 07 00 00 00 00</strong> via Wave, puis entrez la référence.',
+  card:'<strong>Carte bancaire :</strong> Vous serez redirigé vers notre page sécurisée CinetPay.',
+  cash:'<strong>Paiement à la livraison :</strong> Payez en espèces au livreur. Abidjan uniquement.'
+};
+
+function selectPay(el,method){
+  document.querySelectorAll('.pay-option').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPayMethod=method;
+  document.getElementById('payDetails').innerHTML=payInfos[method];
+  document.getElementById('refRow').style.display=method==='cash'?'none':'grid';
+}
+
+function goToStep2(){
+  const fname=document.getElementById('fname').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const address=document.getElementById('address').value.trim();
+  if(!fname||!phone||!address){showToast('⚠️ Remplissez les champs obligatoires');return}
+  if(cart.length===0){showToast('⚠️ Votre panier est vide');return}
+  document.getElementById('step1').style.display='none';
+  document.getElementById('step2').style.display='block';
+  document.querySelectorAll('.step').forEach((s,i)=>{s.className='step '+(i===0?'done':i===1?'active':'inactive')});
+}
+
+function backToStep1(){
+  document.getElementById('step2').style.display='none';
+  document.getElementById('step1').style.display='block';
+  document.querySelectorAll('.step').forEach((s,i)=>{s.className='step '+(i===0?'active':'inactive')});
+}
+
+function placeOrder(){
+  if(selectedPayMethod!=='cash'){
+    const ref=document.getElementById('payRef').value.trim();
+    if(!ref){showToast('⚠️ Entrez votre référence de paiement');return}
+  }
+  const orderNum='PTS'+Date.now().toString().slice(-6);
+  document.getElementById('orderNum').textContent=orderNum;
+  const fname=document.getElementById('fname').value;
+  const lname=document.getElementById('lname').value;
+  const phone=document.getElementById('phone').value;
+  const sub=cart.reduce((s,x)=>s+x.price*x.qty,0);
+  const total=sub+selectedDeliveryPrice;
+  const payLabels={orange:'Orange Money',mtn:'MTN MoMo',wave:'Wave',card:'Carte bancaire',cash:'Paiement livraison'};
+  document.getElementById('confirmDetails').innerHTML=`
+    <div class="confirm-row"><span>Client</span><span>${fname} ${lname}</span></div>
+    <div class="confirm-row"><span>Téléphone</span><span>${phone}</span></div>
+    <div class="confirm-row"><span>Articles</span><span>${cart.reduce((s,x)=>s+x.qty,0)} article(s)</span></div>
+    <div class="confirm-row"><span>Livraison</span><span>${fmt(selectedDeliveryPrice)}</span></div>
+    <div class="confirm-row"><span>Paiement</span><span>${payLabels[selectedPayMethod]}</span></div>
+    <div class="confirm-row"><span>Total</span><span>${fmt(total)}</span></div>`;
+  showPage('confirm');
+}
+
+function resetCart(){
+  cart=[];
+  updateCartBadge();
+  renderCartPage();
+  ['fname','lname','phone','email','address','notes','payRef'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.value='';
+  });
+  document.getElementById('step2').style.display='none';
+  document.getElementById('step1').style.display='block';
+}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  window.scrollTo(0,0);
+  if(name==='catalog')renderCatalog();
+  if(name==='cart')renderCartPage();
+  if(name==='order')renderOrderSummary();
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+renderHomeGrid();
+renderCatalog();
+renderCartPage();
+</script>
+</body>
+</html>
